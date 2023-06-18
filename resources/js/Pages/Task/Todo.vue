@@ -3,19 +3,22 @@ import {Head, useForm} from '@inertiajs/vue3';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import DangerButton from "@/Components/DangerButton.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
-import {reactive} from "vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {reactive, ref} from "vue";
 
-const form = useForm({
-    task: '',
-});
+const ENTER_KEY = 13
 
 const availableStatuses = [
     'to-do',
     'in-progress',
     'finished'
 ];
+
+const taskInput = ref('')
+
+const form = useForm({
+    task: '',
+});
 
 const todo = reactive({
     tasks: [],
@@ -29,11 +32,18 @@ const deleteTask = (index) => {
 const editTask = (index) => {
     form.task = todo.tasks[index].name
     todo.editedTaskIndex = index;
+    taskInput.value.focus()
 };
 
 const changeStatus = (index) => {
     let statusIndex = availableStatuses.indexOf(todo.tasks[index].status);
     todo.tasks[index].status = availableStatuses[++statusIndex % availableStatuses.length]
+};
+
+const handleInputKeyPress = (event) => {
+    if (event.keyCode === ENTER_KEY) {
+        submit();
+    }
 };
 
 const submit = () => {
@@ -51,8 +61,6 @@ const submit = () => {
     }
     form.task = '';
 }
-
-
 </script>
 
 <template>
@@ -71,6 +79,8 @@ const submit = () => {
 
                     <div class="flex bg-red-100 max-w-3xl mx-auto">
                         <TextInput
+                            @keyup="handleInputKeyPress"
+                            ref="taskInput"
                             id="task"
                             type="text"
                             class="w-3/4"
@@ -94,49 +104,55 @@ const submit = () => {
                                 <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Task
                                 </th>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 bg-gray-50 w-48 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Status
                                 </th>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 bg-gray-50 w-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     #
                                 </th>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 bg-gray-50 w-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     #
                                 </th>
                             </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr v-for="(task, index) in todo.tasks">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ task.name }}
+                                    <td class="px-6 py-4">
+                                        <span :class="{'line-through': task.status === 'finished'}">
+                                            {{ task.name }}
+                                        </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <label @click="changeStatus(index)" class="cursor-pointer select-none">
+                                    <td class="px-6 py-4">
+                                        <label
+                                            @click="changeStatus(index)"
+                                            class="cursor-pointer select-none"
+                                            :class="{
+                                                'text-red-600': task.status === 'to-do',
+                                                'text-yellow-600': task.status === 'in-progress',
+                                                'text-green-600': task.status === 'finished'
+                                            }"
+                                        >
                                             {{ task.status }}
                                         </label>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <SecondaryButton
+                                    <td class="px-6 py-4">
+                                        <font-awesome-icon
+                                            class="cursor-pointer"
+                                            icon="edit"
                                             @click="editTask(index)"
-                                        >
-                                            Edit
-                                        </SecondaryButton>
+                                        />
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <DangerButton
-                                            :class="{ 'opacity-25': form.processing }"
-                                            :disabled="form.processing"
+                                    <td class="px-6 py-4">
+                                        <font-awesome-icon
+                                            class="cursor-pointer"
+                                            icon="trash"
                                             @click="deleteTask(index)"
-                                        >
-                                            Delete
-                                        </DangerButton>
+                                        />
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-
-
                 </div>
             </div>
         </div>
