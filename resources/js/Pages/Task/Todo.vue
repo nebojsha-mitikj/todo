@@ -1,44 +1,35 @@
 <script setup>
-import {Head, useForm} from '@inertiajs/vue3';
+import {Head} from '@inertiajs/vue3';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import axios from 'axios';
 import {reactive, ref} from "vue";
 
-const ENTER_KEY = 13
+const ENTER_KEY = 13;
 
-const availableStatuses = [
+const STATUSES = [
     'to-do',
     'in-progress',
     'finished'
 ];
 
+const props = defineProps({
+    tasks: {
+        type: Array,
+        default: () => [],
+    },
+});
+
 const taskInput = ref('')
 
-const form = useForm({
-    task: '',
-});
-
-const todo = reactive({
-    tasks: [],
+const data = reactive({
+    tasks: ref(props.tasks),
+    taskDescription: '',
+    status: 'to-do',
     editedTaskIndex: null
 });
-
-const deleteTask = (index) => {
-    todo.tasks.splice(index, 1);
-};
-
-const editTask = (index) => {
-    form.task = todo.tasks[index].name
-    todo.editedTaskIndex = index;
-    taskInput.value.focus()
-};
-
-const changeStatus = (index) => {
-    let statusIndex = availableStatuses.indexOf(todo.tasks[index].status);
-    todo.tasks[index].status = availableStatuses[++statusIndex % availableStatuses.length]
-};
 
 const handleInputKeyPress = (event) => {
     if (event.keyCode === ENTER_KEY) {
@@ -46,21 +37,60 @@ const handleInputKeyPress = (event) => {
     }
 };
 
+const firstCharToUpperCase = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+const editTask = (index) => {
+    data.taskDescription = data.tasks[index].description
+    data.editedTaskIndex = index;
+    taskInput.value.focus()
+};
+
+const changeTaskStatus = (index) => {
+    let newStatusIndex = (STATUSES.indexOf(data.tasks[index].status) + 1) % STATUSES.length;
+    let taskData = {'description': data.tasks[index].description, 'status': STATUSES[newStatusIndex]}
+    axios.put(route('task.update', {task: data.tasks[index].id}), taskData).then(res => {
+        data.tasks[index] = res.data.task;
+    });
+};
+
+const deleteTask = (taskId, index) => {
+    axios.delete(route('task.destroy', {task: taskId})).then(res => {
+        if(res.data.taskDestroyed){
+            data.tasks.splice(index, 1);
+        }
+    });
+};
+
+const storeTask = () => {
+    let taskData = {'description': data.taskDescription, 'status': 'to-do'}
+    axios.post(route('task.store'), taskData).then(res => {
+        data.tasks.push(res.data.task);
+        data.taskDescription = '';
+    })
+}
+
+const updateTask = () => {
+    let taskData = {'description': data.taskDescription, 'status': data.tasks[data.editedTaskIndex].status}
+    axios.put(route('task.update', {task: data.tasks[data.editedTaskIndex].id}), taskData).then(res => {
+        data.tasks[data.editedTaskIndex] = res.data.task;
+        data.editedTaskIndex = null;
+        data.taskDescription = '';
+    });
+}
+
 const submit = () => {
-    if(form.task.length === 0){
+    if(data.taskDescription.length === 0){
         return;
     }
-    if(todo.editedTaskIndex == null){
-        todo.tasks.push({
-            'name': form.task,
-            'status': 'to-do'
-        });
+    if(data.editedTaskIndex == null){
+        storeTask()
     }else{
-        todo.tasks[todo.editedTaskIndex].name = form.task;
-        todo.editedTaskIndex = null;
+        updateTask()
     }
-    form.task = '';
 }
+
 </script>
 
 <template>
@@ -85,12 +115,11 @@ const submit = () => {
                             type="text"
                             class="w-3/4"
                             placeholder="Enter task"
-                            v-model="form.task"
+                            v-model="data.taskDescription"
                             required
                         />
                         <PrimaryButton
                             class="justify-center w-1/4"
-                            :disabled="form.processing"
                             @click="submit"
                         >
                             Submit
@@ -116,15 +145,15 @@ const submit = () => {
                             </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="(task, index) in todo.tasks">
+                                <tr v-for="(task, index) in data.tasks">
                                     <td class="px-6 py-4">
                                         <span :class="{'line-through': task.status === 'finished'}">
-                                            {{ task.name }}
+                                            {{ task.description }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <label
-                                            @click="changeStatus(index)"
+                                            @click="changeTaskStatus(index)"
                                             class="cursor-pointer select-none"
                                             :class="{
                                                 'text-red-600': task.status === 'to-do',
@@ -132,7 +161,7 @@ const submit = () => {
                                                 'text-green-600': task.status === 'finished'
                                             }"
                                         >
-                                            {{ task.status }}
+                                            {{ firstCharToUpperCase(task.status) }}
                                         </label>
                                     </td>
                                     <td class="px-6 py-4">
@@ -146,7 +175,7 @@ const submit = () => {
                                         <font-awesome-icon
                                             class="cursor-pointer"
                                             icon="trash"
-                                            @click="deleteTask(index)"
+                                            @click="deleteTask(task.id, index)"
                                         />
                                     </td>
                                 </tr>

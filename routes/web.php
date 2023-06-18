@@ -35,7 +35,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/todo', [TaskController::class, 'index'])->name('todo.index');
+    Route::prefix('todo')->group(function () {
+        Route::get('/', [TaskController::class, 'index'])->name('task.index');
+        Route::post('/', [TaskController::class, 'store'])->name('task.store');
+        Route::put('/{task}', [TaskController::class, 'update'])->name('task.update');
+        Route::delete('/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
+    });
+
 });
 
 require __DIR__.'/auth.php';
