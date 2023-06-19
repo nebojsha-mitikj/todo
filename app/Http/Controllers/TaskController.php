@@ -24,7 +24,7 @@ class TaskController extends Controller
     {
         return Inertia::render('Task/Todo', [
             'tasks' => Task::where('user_id', '=', Auth::id())
-                ->where('date', '=', Carbon::today())
+                ->whereBetween('date', [Carbon::today(), Carbon::tomorrow()])
                 ->get()
         ]);
     }
