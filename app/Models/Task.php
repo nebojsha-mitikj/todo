@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,9 +29,7 @@ class Task extends Model
         $this->description = $request->description;
         $this->status = $request->status;
         $this->user_id = Auth::id();
-        if($request->has('date')){
-            $this->date = $request->date;
-        }
+        $this->date = $request->has('date') ? $request->date : Carbon::now();
         $this->save();
         return $this;
     }
