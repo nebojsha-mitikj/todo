@@ -29,7 +29,7 @@ class Task extends Model
         $this->description = $request->description;
         $this->status = $request->status;
         $this->user_id = Auth::id();
-        $this->date = $request->has('date') ? $request->date : Carbon::now();
+        $this->date = $request->date;
         $this->save();
         return $this;
     }
