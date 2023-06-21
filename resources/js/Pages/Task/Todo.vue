@@ -3,7 +3,7 @@ import {Head} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+import TaskTable from '@/Components/TaskTable.vue';
 import axios from 'axios';
 import {reactive, ref, computed} from 'vue';
 import moment from 'moment';
@@ -54,10 +54,6 @@ const getTaskIndexById = (id) => {
         }
     }
     throw new Error('Task with id ' + id + ' does not exist.');
-}
-
-const firstCharToUpperCase = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 const editTask = (id) => {
@@ -140,13 +136,10 @@ const submit = () => {
     <Head title="Todo" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Todo</h2>
-        </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white">
 
                     <h2 class="mx-6 mt-6 text-center text-lg font-medium text-gray-900">
                         Your tasks for {{!data.displayPlanner ? 'today' : 'tomorrow'}}
@@ -180,63 +173,15 @@ const submit = () => {
                     </div>
 
                     <div class="max-w-3xl mx-auto my-8">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
-                            <tr>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Task
-                                </th>
-                                <th
-                                    v-if="!data.displayPlanner"
-                                    class="px-6 py-3 bg-gray-50 w-48 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th class="px-6 py-3 bg-gray-50 w-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    #
-                                </th>
-                                <th class="px-6 py-3 bg-gray-50 w-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    #
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="(task, index) in filteredTasks">
-                                    <td class="px-6 py-4">
-                                        <span :class="{'line-through': task.status === 'finished'}">
-                                            {{ task.description }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4" v-if="!data.displayPlanner">
-                                        <label
-                                            @click="changeTaskStatus(task.id)"
-                                            class="inline cursor-pointer select-none"
-                                            :class="{
-                                                'text-red-600': task.status === 'to-do',
-                                                'text-yellow-600': task.status === 'in-progress',
-                                                'text-green-600': task.status === 'finished'
-                                            }"
-                                        >
-                                            {{ firstCharToUpperCase(task.status) }}
-                                        </label>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <font-awesome-icon
-                                            class="cursor-pointer"
-                                            icon="edit"
-                                            @click="editTask(task.id)"
-                                        />
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <font-awesome-icon
-                                            class="cursor-pointer"
-                                            icon="trash"
-                                            @click="deleteTask(task.id)"
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <TaskTable
+                            :tasks="filteredTasks"
+                            :exclude="data.displayPlanner ? ['status'] : []"
+                            @editTask="editTask"
+                            @deleteTask="deleteTask"
+                            @changeTaskStatus="changeTaskStatus"
+                        ></TaskTable>
                     </div>
+
                 </div>
             </div>
         </div>
