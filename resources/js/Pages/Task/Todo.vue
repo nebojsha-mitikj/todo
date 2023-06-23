@@ -25,12 +25,16 @@ const props = defineProps({
 
 const taskInput = ref('')
 
+const time = ref();
+
 const data = reactive({
     tasks: ref(props.tasks),
     taskDescription: '',
     editedTaskId: null,
     displayPlanner: false
 });
+
+
 
 const filteredTasks = computed(() => {
     return data.tasks.filter((task) => {
@@ -153,19 +157,26 @@ const submit = () => {
                         </p>
                     </div>
 
-                    <div class="flex bg-red-100 max-w-3xl mx-auto">
+                    <div class="flex items-center max-w-3xl mx-auto">
                         <TextInput
                             @keyup="handleInputKeyPress"
                             ref="taskInput"
                             id="task"
                             type="text"
-                            class="w-3/4"
+                            class="w-2/4 h-10"
                             placeholder="Enter task"
                             v-model="data.taskDescription"
                             required
                         />
+                        <VueDatePicker
+                            v-model="time"
+                            placeholder="Enter time"
+                            time-picker
+                            disable-time-range-validation
+                            range
+                        />
                         <PrimaryButton
-                            class="justify-center w-1/4"
+                            class="justify-center h-10 w-1/4"
                             @click="submit"
                         >
                             Submit
@@ -187,3 +198,25 @@ const submit = () => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style>
+.dp__action_select, .dp__action_select:hover {
+    background: #1f2937;
+}
+.dp__action_cancel, .dp__action_select {
+    padding: 5px 10px;
+    height: auto;
+}
+.dp__action_cancel:hover {
+    border-color: #1f2937;
+}
+.dp__selection_preview {
+    display: none;
+}
+.dp__input_readonly {
+    height: 2.5rem;
+}
+.dp__main {
+    width: 25%;
+}
+</style>

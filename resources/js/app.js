@@ -13,6 +13,9 @@ import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 library.add(faTrash);
 library.add(faEdit);
 
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 createInertiaApp({
@@ -23,6 +26,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .component("font-awesome-icon", FontAwesomeIcon)
+            .component('VueDatePicker', VueDatePicker)
             .mount(el);
     },
     progress: {
