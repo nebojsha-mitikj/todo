@@ -18,6 +18,10 @@ const data = reactive({
         'font-medium text-gray-500 uppercase tracking-wider'
 });
 
+const getTaskTime = (task) => {
+    return `${task.start_time.slice(0,-3)} - ${task.end_time.slice(0,-3)}`;
+}
+
 const firstCharToUpperCase = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -29,7 +33,8 @@ const firstCharToUpperCase = (str) => {
         <thead>
         <tr>
             <th v-if="!exclude.includes('description')" :class="data.baseStyle">Task</th>
-            <th v-if="!exclude.includes('status')" :class="data.baseStyle + ' w-48'">Status</th>
+            <th v-if="!exclude.includes('time')" :class="data.baseStyle + ' w-40'">Time</th>
+            <th v-if="!exclude.includes('status')" :class="data.baseStyle + ' w-36'">Status</th>
             <th v-if="!exclude.includes('edit')" :class="data.baseStyle + ' w-4'">#</th>
             <th v-if="!exclude.includes('delete')" :class="data.baseStyle + ' w-4'">#</th>
         </tr>
@@ -39,6 +44,11 @@ const firstCharToUpperCase = (str) => {
                 <td class="px-6 py-4" v-if="!exclude.includes('description')">
                     <span :class="{'line-through': task.status === 'finished'}">
                         {{ task.description }}
+                    </span>
+                </td>
+                <td class="px-6 py-4" v-if="!exclude.includes('time')">
+                    <span class="text-gray-700">
+                        {{ getTaskTime(task) }}
                     </span>
                 </td>
                 <td class="px-6 py-4" v-if="!exclude.includes('status')">

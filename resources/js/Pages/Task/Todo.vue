@@ -5,8 +5,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TaskTable from '@/Components/TaskTable.vue';
 import axios from 'axios';
-import {reactive, ref, computed} from 'vue';
+import {reactive, ref, computed, toRaw} from 'vue';
 import moment from 'moment';
+import { getStringFromTimeObject, getTimeObjectFromString } from "@/Utils/TimeUtil.js";
 
 const ENTER_KEY = 13;
 
@@ -25,15 +26,13 @@ const props = defineProps({
 
 const taskInput = ref('')
 
-const time = ref();
-
 const data = reactive({
     tasks: ref(props.tasks),
     taskDescription: '',
+    taskTimeRange: ref(),
     editedTaskId: null,
     displayPlanner: false
 });
-
 
 
 const filteredTasks = computed(() => {
@@ -64,12 +63,18 @@ const editTask = (id) => {
     let index = getTaskIndexById(id)
     data.taskDescription = data.tasks[index].description
     data.editedTaskId = data.tasks[index].id;
+    data.taskTimeRange = ref([
+        getTimeObjectFromString(data.tasks[index].start_time),
+        getTimeObjectFromString(data.tasks[index].end_time)
+    ]);
     taskInput.value.focus()
 };
+
 
 const switchDisplay = () => {
     data.editedTaskId = null;
     data.taskDescription = '';
+    data.taskTimeRange = ref();
     data.displayPlanner = !data.displayPlanner;
 }
 
@@ -79,7 +84,9 @@ const changeTaskStatus = (id) => {
     let taskData = {
         'description': data.tasks[index].description,
         'status': STATUSES[newStatusIndex],
-        'date': data.tasks[index].date
+        'date': data.tasks[index].date,
+        'start_time': data.tasks[index].start_time,
+        'end_time': data.tasks[index].end_time
     }
     axios.put(route('task.update', {task: data.tasks[index].id}), taskData).then(res => {
         data.tasks[index] = res.data.task;
@@ -101,11 +108,14 @@ const storeTask = () => {
         'date': moment()
             .utcOffset('+0200')
             .add(Number(data.displayPlanner),'days')
-            .format('YYYY-MM-DD')
+            .format('YYYY-MM-DD'),
+        'start_time': getStringFromTimeObject(data.taskTimeRange[0]),
+        'end_time': getStringFromTimeObject(data.taskTimeRange[1])
     }
     axios.post(route('task.store'), taskData).then(res => {
         data.tasks.push(res.data.task);
         data.taskDescription = '';
+        data.taskTimeRange = ref();
     })
 }
 
@@ -114,17 +124,20 @@ const updateTask = () => {
     let taskData = {
         'description': data.taskDescription,
         'status': data.tasks[index].status,
-        'date': data.tasks[index].date
+        'date': data.tasks[index].date,
+        'start_time': getStringFromTimeObject(data.taskTimeRange[0]),
+        'end_time': getStringFromTimeObject(data.taskTimeRange[1])
     }
     axios.put(route('task.update', {task: data.tasks[index].id}), taskData).then(res => {
         data.tasks[index] = res.data.task;
-        data.editedTaskId = null;
         data.taskDescription = '';
+        data.taskTimeRange = ref();
+        data.editedTaskId = null;
     });
 }
 
 const submit = () => {
-    if(data.taskDescription.length === 0){
+    if(data.taskDescription.length === 0 || toRaw(data.taskTimeRange) == null){
         return;
     }
     if(data.editedTaskId == null){
@@ -169,7 +182,7 @@ const submit = () => {
                             required
                         />
                         <VueDatePicker
-                            v-model="time"
+                            v-model="data.taskTimeRange"
                             placeholder="Enter time"
                             time-picker
                             disable-time-range-validation
