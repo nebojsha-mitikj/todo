@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Validation\TaskValidationRules;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -26,10 +27,6 @@ class UpdateTaskRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'description' => 'required|string|min:1|max:255',
-            'status' => 'required|in:to-do,in-progress,finished',
-            'date' => 'required|date',
-        ];
+        return TaskValidationRules::getRules();
     }
 }
