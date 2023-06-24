@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +16,12 @@ class Task extends Model
 
     protected $table = 'tasks';
 
-    protected $fillable = ['description', 'status', 'date', 'user_id'];
+    protected $fillable = [
+        'description',
+        'status',
+        'date',
+        'user_id'
+    ];
 
     public function user(): BelongsTo
     {
@@ -30,6 +34,8 @@ class Task extends Model
         $this->status = $request->status;
         $this->user_id = Auth::id();
         $this->date = $request->date;
+        $this->start_time = $request->start_time;
+        $this->end_time = $request->end_time;
         $this->save();
         return $this;
     }
