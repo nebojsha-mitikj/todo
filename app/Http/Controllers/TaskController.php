@@ -51,9 +51,10 @@ class TaskController extends Controller
      */
     public function updateStatus(UpdateTaskStatusRequest $request, Task $task): JsonResponse
     {
+        $user = Auth::user();
         $task->updateStatus($request->status);
-        if(Task::areFinished(Auth::id())){
-            Auth::user()->setDailyGoalReach();
+        if(Task::areFinished($user->id) && !$user->dailyGoalIsReached()){
+            $user->setDailyGoalReach();
         }
         return response()->json(['task' => $task]);
     }

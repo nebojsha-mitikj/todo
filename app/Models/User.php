@@ -47,22 +47,46 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function tasks(): HasMany {
+    public function tasks(): HasMany
+    {
         return $this->hasMany(Task::class);
     }
 
-    public function setDailyGoalReach(): bool
+    public function dailyGoalStreakIsActive(): bool
     {
-        if(!$this->dailyGoalIsReached()) {
-            $this->last_daily_goal_reach_date = Carbon::today();
-            ++$this->daily_goal_reach_counter;
-            return $this->save();
-        }
-        return true;
+        return $this->last_daily_goal_reach_date !== null && $this->daily_goal_reach_counter > 0;
     }
 
     public function dailyGoalIsReached(): bool
     {
         return $this->last_daily_goal_reach_date === Carbon::today()->format('Y-m-d');
     }
+
+    public function shouldResetGoalReach(): bool
+    {
+        if($this->dailyGoalIsReached() || !$this->dailyGoalStreakIsActive()){
+            return false;
+        }
+        return $this->tasks()
+            ->whereBetween('date', [
+                $this->last_daily_goal_reach_date,
+                Carbon::yesterday()->toDateString()
+            ])->where('status', '!=', 'finished')
+            ->exists();
+    }
+
+    public function resetGoalReach(): bool
+    {
+        $this->daily_goal_reach_counter = 0;
+        $this->save();
+        return true;
+    }
+
+    public function setDailyGoalReach(): bool
+    {
+        $this->last_daily_goal_reach_date = Carbon::today();
+        ++$this->daily_goal_reach_counter;
+        return $this->save();
+    }
+
 }
