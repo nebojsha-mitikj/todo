@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,6 +39,21 @@ class Task extends Model
         $this->end_time = $request->end_time;
         $this->save();
         return $this;
+    }
+
+    public function updateStatus(string $status): self
+    {
+        $this->status = $status;
+        $this->save();
+        return $this;
+    }
+
+    public static function areFinished(int $userId): bool
+    {
+        return !self::where('user_id', $userId)
+            ->whereDate('date', Carbon::today())
+            ->where('status', '!=', 'finished')
+            ->exists();
     }
 
 

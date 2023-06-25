@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,7 +22,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'daily_goal_reach_counter',
+        'last_daily_goal_reach_date',
+        'password'
     ];
 
     /**
@@ -46,5 +49,20 @@ class User extends Authenticatable
 
     public function tasks(): HasMany {
         return $this->hasMany(Task::class);
+    }
+
+    public function setDailyGoalReach(): bool
+    {
+        if(!$this->dailyGoalIsReached()) {
+            $this->last_daily_goal_reach_date = Carbon::today();
+            ++$this->daily_goal_reach_counter;
+            return $this->save();
+        }
+        return true;
+    }
+
+    public function dailyGoalIsReached(): bool
+    {
+        return $this->last_daily_goal_reach_date === Carbon::today()->format('Y-m-d');
     }
 }

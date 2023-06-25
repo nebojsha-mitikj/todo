@@ -81,14 +81,9 @@ const switchDisplay = () => {
 const changeTaskStatus = (id) => {
     let index = getTaskIndexById(id)
     let newStatusIndex = (STATUSES.indexOf(data.tasks[index].status) + 1) % STATUSES.length;
-    let taskData = {
-        'description': data.tasks[index].description,
-        'status': STATUSES[newStatusIndex],
-        'date': data.tasks[index].date,
-        'start_time': data.tasks[index].start_time,
-        'end_time': data.tasks[index].end_time
-    }
-    axios.put(route('task.update', {task: data.tasks[index].id}), taskData).then(res => {
+    axios.put(route('task.update.status', {task: data.tasks[index].id}), {
+        'status': STATUSES[newStatusIndex]
+    }).then(res => {
         data.tasks[index] = res.data.task;
     });
 };
