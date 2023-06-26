@@ -6,6 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -40,6 +41,20 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
+
+                            <div
+                                :class="{
+                                    'text-gray-600 hover:text-gray-800': !$page.props.auth.user.daily_goal_reached,
+                                    'text-orange-600 hover:text-orange-700': $page.props.auth.user.daily_goal_reached
+                                }"
+                                class="flex">
+                                <font-awesome-icon
+                                    class="mt-1 mr-1"
+                                    :icon="['fas', 'fire']"
+                                />
+                                {{ $page.props.auth.user.daily_goal_reach_counter }}
+                            </div>
+
                             <!-- Settings Dropdown -->
                             <div class="ml-3 relative">
                                 <Dropdown align="right" width="48">
