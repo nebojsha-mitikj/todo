@@ -32,8 +32,10 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
-        $currentDate = Carbon::today()->format('Y-m-d');
-        $user->daily_goal_reached = $user->last_daily_goal_reach_date === $currentDate;
+        if(!empty($user)){
+            $currentDate = Carbon::today()->format('Y-m-d');
+            $user->daily_goal_reached = $user->last_daily_goal_reach_date === $currentDate;
+        }
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $user,

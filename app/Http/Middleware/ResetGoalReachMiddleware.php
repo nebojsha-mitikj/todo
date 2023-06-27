@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ class ResetGoalReachMiddleware
     {
         $user = Auth::user();
         if ($user->shouldResetGoalReach()) {
-            $user->resetGoalReach();
+            User::find(Auth::id())->resetGoalReach();
         }
         return $next($request);
     }
