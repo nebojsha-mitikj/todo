@@ -8,14 +8,13 @@ import axios from 'axios';
 import {reactive, ref, computed, toRaw} from 'vue';
 import moment from 'moment';
 import { getStringFromTimeObject, getTimeObjectFromString } from "@/Utils/TimeUtil.js";
+import useEmitter from '@/Composables/useEmitter.js';
 
 const ENTER_KEY = 13;
 
-const STATUSES = [
-    'to-do',
-    'in-progress',
-    'finished'
-];
+const STATUSES = ['to-do', 'in-progress', 'finished'];
+
+const emitter = useEmitter();
 
 const props = defineProps({
     tasks: {
@@ -85,6 +84,9 @@ const changeTaskStatus = (id) => {
         'status': STATUSES[newStatusIndex]
     }).then(res => {
         data.tasks[index] = res.data.task;
+        if(res.data.goalReached){
+            emitter.emit('goalReached');
+        }
     });
 };
 
