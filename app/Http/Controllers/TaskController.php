@@ -54,10 +54,12 @@ class TaskController extends Controller
     {
         $user = User::findOrFail(Auth::id());
         $task->updateStatus($request->status);
+        $goalReached = false;
         if(Task::areFinished($user->id) && !$user->dailyGoalIsReached()){
             $user->setDailyGoalReach();
+            $goalReached = true;
         }
-        return response()->json(['task' => $task]);
+        return response()->json(['task' => $task, 'goalReached' => $goalReached]);
     }
 
     /**
