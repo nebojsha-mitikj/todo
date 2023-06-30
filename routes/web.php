@@ -3,11 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\TaskController;
+use App\Http\Middleware\ResetGoalReachMiddleware;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +26,7 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', ResetGoalReachMiddleware::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -36,6 +35,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [TaskController::class, 'index'])->name('task.index');
         Route::post('/', [TaskController::class, 'store'])->name('task.store');
         Route::put('/{task}', [TaskController::class, 'update'])->name('task.update');
+        Route::put('/status/{task}', [TaskController::class, 'updateStatus'])->name('task.update.status');
         Route::delete('/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
     });
 

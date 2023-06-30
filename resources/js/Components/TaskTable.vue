@@ -1,6 +1,6 @@
 <script setup>
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-import {reactive} from 'vue';
+import {reactive, computed} from 'vue';
 
 const props = defineProps({
     exclude: {
@@ -12,6 +12,19 @@ const props = defineProps({
         default: []
     }
 });
+
+const convertToMilliseconds = (timeString) => {
+    const [hours, minutes] = timeString.split(':');
+    return parseInt(hours, 10) * 60 * 60 * 1000 + parseInt(minutes, 10) * 60 * 1000;
+}
+
+const orderedTasks = computed(() => {
+    return [...props.tasks].sort((a, b) => {
+        const timeA = convertToMilliseconds(a.end_time);
+        const timeB = convertToMilliseconds(b.end_time);
+        return timeA - timeB;
+    })
+})
 
 const data = reactive({
     baseStyle: 'px-6 py-3 bg-gray-50 text-left text-xs ' +
@@ -40,7 +53,7 @@ const firstCharToUpperCase = (str) => {
         </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="task in tasks">
+            <tr v-for="task in orderedTasks">
                 <td class="px-6 py-4" v-if="!exclude.includes('description')">
                     <span :class="{'line-through': task.status === 'finished'}">
                         {{ task.description }}

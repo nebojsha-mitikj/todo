@@ -7,7 +7,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DestroyTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Requests\UpdateTaskStatusRequest;
 use App\Models\Task;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +20,7 @@ class TaskController extends Controller
 {
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the tasks.
      */
     public function index(): Response
     {
@@ -30,7 +32,7 @@ class TaskController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created task in storage.
      */
     public function store(StoreTaskRequest $request): JsonResponse
     {
@@ -38,15 +40,30 @@ class TaskController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified task in storage.
      */
     public function update(UpdateTaskRequest $request, Task $task): JsonResponse
     {
         return response()->json(['task' => $task->updateTask($request)]);
     }
 
+    /*
+     * Update the specified task status in storage.
+     */
+    public function updateStatus(UpdateTaskStatusRequest $request, Task $task): JsonResponse
+    {
+        $user = User::findOrFail(Auth::id());
+        $task->updateStatus($request->status);
+        $goalReached = false;
+        if(Task::areFinished($user->id) && !$user->dailyGoalIsReached()){
+            $user->setDailyGoalReach();
+            $goalReached = true;
+        }
+        return response()->json(['task' => $task, 'goalReached' => $goalReached]);
+    }
+
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified task from storage.
      */
     public function destroy(DestroyTaskRequest $request, Task $task): JsonResponse
     {

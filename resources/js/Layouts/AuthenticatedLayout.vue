@@ -1,13 +1,32 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import useEmitter from '@/Composables/useEmitter.js';
+import usePage from '@/Composables/usePage.js';
 
 const showingNavigationDropdown = ref(false);
+
+const page = usePage();
+const emitter = useEmitter();
+
+const goal = reactive({
+    counter: page.props.auth.user.daily_goal_reach_counter,
+    isReached: page.props.auth.user.daily_goal_reached
+});
+
+emitter.on('goalReached', () => {
+    if(!goal.isReached){
+        ++goal.counter;
+        goal.isReached = true;
+    }
+})
+
 </script>
 
 <template>
@@ -40,6 +59,20 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
+
+                            <div
+                                :class="{
+                                    'text-gray-600 hover:text-gray-800': !goal.isReached,
+                                    'text-orange-600 hover:text-orange-700': goal.isReached
+                                }"
+                                class="flex">
+                                <font-awesome-icon
+                                    class="mt-1 mr-1"
+                                    :icon="['fas', 'fire']"
+                                />
+                                {{ goal.counter }}
+                            </div>
+
                             <!-- Settings Dropdown -->
                             <div class="ml-3 relative">
                                 <Dropdown align="right" width="48">
