@@ -40,9 +40,7 @@ emitter.on('goalReached', () => {
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
                                 <Link :href="route('task.index')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
+                                    <ApplicationLogo/>
                                 </Link>
                             </div>
 
