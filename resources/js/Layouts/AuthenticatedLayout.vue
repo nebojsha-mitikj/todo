@@ -17,7 +17,7 @@ const emitter = useEmitter();
 
 const goal = reactive({
     counter: page.props.auth.user.daily_goal_reach_counter,
-    isReached: page.props.auth.user.daily_goal_reached
+    isReached: page.props.dailyGoalReached
 });
 
 emitter.on('goalReached', () => {

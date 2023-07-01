@@ -9,7 +9,6 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Requests\UpdateTaskStatusRequest;
 use App\Models\Task;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +51,7 @@ class TaskController extends Controller
      */
     public function updateStatus(UpdateTaskStatusRequest $request, Task $task): JsonResponse
     {
-        $user = User::findOrFail(Auth::id());
+        $user = Auth::user();
         $task->updateStatus($request->status);
         $goalReached = false;
         if(Task::areFinished($user->id) && !$user->dailyGoalIsReached()){
