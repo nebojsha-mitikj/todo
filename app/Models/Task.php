@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enum\TaskStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,9 +42,9 @@ class Task extends Model
         return $this;
     }
 
-    public function updateStatus(string $status): self
+    public function updateStatus(TaskStatus $status): self
     {
-        $this->status = $status;
+        $this->status = $status->value;
         $this->save();
         return $this;
     }
@@ -52,7 +53,7 @@ class Task extends Model
     {
         return !self::where('user_id', $userId)
             ->whereDate('date', Carbon::today())
-            ->where('status', '!=', 'finished')
+            ->where('status', '!=', TaskStatus::Finished->value)
             ->exists();
     }
 

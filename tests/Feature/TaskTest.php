@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enum\TaskStatus;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -76,7 +77,7 @@ class TaskTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->put('/todo/status/' . $task->id, ['status' => 'finished']);
+            ->put('/todo/status/' . $task->id, ['status' => TaskStatus::Finished->value]);
 
         $response->assertOk();
 

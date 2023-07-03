@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enum\TaskStatus;
 use App\Http\Requests\DestroyTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
@@ -52,7 +53,7 @@ class TaskController extends Controller
     public function updateStatus(UpdateTaskStatusRequest $request, Task $task): JsonResponse
     {
         $user = Auth::user();
-        $task->updateStatus($request->status);
+        $task->updateStatus(TaskStatus::tryFrom($request->status));
         $goalReached = false;
         if(Task::areFinished($user->id) && !$user->dailyGoalIsReached()){
             $user->setDailyGoalReach();

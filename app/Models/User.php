@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enum\TaskStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -71,7 +72,7 @@ class User extends Authenticatable
             ->whereBetween('date', [
                 $this->last_daily_goal_reach_date,
                 Carbon::yesterday()->toDateString()
-            ])->where('status', '!=', 'finished')
+            ])->where('status', '!=', TaskStatus::Finished->value)
             ->exists();
     }
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enum\TaskStatus;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,7 +21,7 @@ class UserShouldResetGoalReachTest extends TestCase
             'daily_goal_reach_counter' => 2
         ])->has(
             Task::factory([
-                'status' => 'in-progress',
+                'status' => TaskStatus::InProgress->value,
                 'date' => Carbon::yesterday()->toDateString()
             ])->count(3)
         )->create();
@@ -35,7 +36,7 @@ class UserShouldResetGoalReachTest extends TestCase
             'daily_goal_reach_counter' => 1
         ])->has(
             Task::factory([
-                'status' => 'finished',
+                'status' => TaskStatus::Finished->value,
                 'date' => Carbon::yesterday()->toDateString()
             ])->count(3)
         )->create();

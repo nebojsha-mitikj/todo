@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enum\TaskStatus;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +21,7 @@ class TaskFactory extends Factory
     {
         return [
             'description' => fake()->text(50),
-            'status' => 'to-do',
+            'status' => TaskStatus::Todo->value,
             'date' => Carbon::today(),
             'start_time' => '00:00:00',
             'end_time' => '00:00:00',
