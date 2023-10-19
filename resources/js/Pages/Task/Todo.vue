@@ -151,7 +151,7 @@ const submit = () => {
 
     <AuthenticatedLayout>
 
-        <div class="py-12">
+        <div class="sm:py-12 py-6">
             <div class="max-w-7xl mx-auto lg:px-8 sm:px-6 px-2">
                 <div class="bg-white">
 

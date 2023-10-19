@@ -33,7 +33,7 @@ const filteredTasks = computed(() => {
     <Head title="History"/>
 
     <AuthenticatedLayout>
-        <div class="py-12">
+        <div class="sm:py-12 py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white">
                     <h2 class="mx-6 sm:mt-6 text-center text-lg font-medium text-gray-900">

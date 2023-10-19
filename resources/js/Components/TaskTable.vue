@@ -47,7 +47,7 @@ const firstCharToUpperCase = (str) => {
             <thead>
             <tr>
                 <th v-if="!exclude.includes('description')" :class="data.baseStyle + ' min-w-[14rem]'">Task</th>
-                <th v-if="!exclude.includes('time')" :class="data.baseStyle + ' min-w-[9rem]'">Time</th>
+                <th v-if="!exclude.includes('time')" :class="data.baseStyle + ' min-w-[10rem]'">Time</th>
                 <th v-if="!exclude.includes('status')" :class="data.baseStyle + ' min-w-[9rem]'">Status</th>
                 <th v-if="!exclude.includes('edit')" :class="data.baseStyle + ' w-4'">#</th>
                 <th v-if="!exclude.includes('delete')" :class="data.baseStyle + ' w-4'">#</th>
