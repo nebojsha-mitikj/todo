@@ -152,10 +152,10 @@ const submit = () => {
     <AuthenticatedLayout>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto lg:px-8 sm:px-6 px-2">
                 <div class="bg-white">
 
-                    <h2 class="mx-6 mt-6 text-center text-lg font-medium text-gray-900">
+                    <h2 class="mx-6 sm:mt-6 text-center text-lg font-medium text-gray-900">
                         Your tasks for {{!data.displayPlanner ? 'today' : 'tomorrow'}}
                     </h2>
 
@@ -167,26 +167,27 @@ const submit = () => {
                         </p>
                     </div>
 
-                    <div class="flex items-center max-w-3xl mx-auto">
+                    <div class="grid grid-cols-12 max-w-3xl mx-auto">
                         <TextInput
                             @keyup="handleInputKeyPress"
                             ref="taskInput"
                             id="task"
                             type="text"
-                            class="w-2/4 h-10"
+                            class="sm:col-span-6 col-span-12 h-10"
                             placeholder="Enter task"
                             v-model="data.taskDescription"
                             required
                         />
                         <VueDatePicker
                             v-model="data.taskTimeRange"
+                            class="sm:col-span-3 col-span-12 sm:mt-0 mt-2"
                             placeholder="Enter time"
                             time-picker
                             disable-time-range-validation
                             range
                         />
                         <PrimaryButton
-                            class="justify-center h-10 w-1/4"
+                            class="h-10 w-full block-important sm:col-span-3 col-span-12 sm:mt-0 mt-2"
                             @click="submit"
                         >
                             Submit
@@ -226,7 +227,7 @@ const submit = () => {
 .dp__input_readonly {
     height: 2.5rem;
 }
-.dp__main {
-    width: 25%;
+.block-important {
+    display: block !important;
 }
 </style>

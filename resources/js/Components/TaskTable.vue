@@ -42,17 +42,18 @@ const firstCharToUpperCase = (str) => {
 </script>
 
 <template>
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead>
-        <tr>
-            <th v-if="!exclude.includes('description')" :class="data.baseStyle">Task</th>
-            <th v-if="!exclude.includes('time')" :class="data.baseStyle + ' w-40'">Time</th>
-            <th v-if="!exclude.includes('status')" :class="data.baseStyle + ' w-36'">Status</th>
-            <th v-if="!exclude.includes('edit')" :class="data.baseStyle + ' w-4'">#</th>
-            <th v-if="!exclude.includes('delete')" :class="data.baseStyle + ' w-4'">#</th>
-        </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+    <div class="overflow-x-auto overflow-y-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+            <tr>
+                <th v-if="!exclude.includes('description')" :class="data.baseStyle + ' min-w-[14rem]'">Task</th>
+                <th v-if="!exclude.includes('time')" :class="data.baseStyle + ' min-w-[9rem]'">Time</th>
+                <th v-if="!exclude.includes('status')" :class="data.baseStyle + ' min-w-[9rem]'">Status</th>
+                <th v-if="!exclude.includes('edit')" :class="data.baseStyle + ' w-4'">#</th>
+                <th v-if="!exclude.includes('delete')" :class="data.baseStyle + ' w-4'">#</th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
             <tr v-for="task in orderedTasks">
                 <td class="px-6 py-4" v-if="!exclude.includes('description')">
                     <span :class="{'line-through': task.status === 'finished'}">
@@ -92,6 +93,7 @@ const firstCharToUpperCase = (str) => {
                     />
                 </td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </template>

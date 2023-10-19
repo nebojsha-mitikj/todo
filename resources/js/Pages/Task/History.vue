@@ -36,7 +36,7 @@ const filteredTasks = computed(() => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white">
-                    <h2 class="mx-6 mt-6 text-center text-lg font-medium text-gray-900">
+                    <h2 class="mx-6 sm:mt-6 text-center text-lg font-medium text-gray-900">
                         Your history
                     </h2>
                     <div class="max-w-3xl mx-auto my-8" v-for="(tasks, date) in filteredTasks">
