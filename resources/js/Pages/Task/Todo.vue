@@ -147,7 +147,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Todo" />
+    <Head title="Planner" />
 
     <AuthenticatedLayout>
 
