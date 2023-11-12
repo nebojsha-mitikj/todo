@@ -12,7 +12,6 @@ class TaskValidationRules extends ValidationRules
     protected array $rules = [
         'description' => 'required|string|min:1|max:255',
         'status' => 'required|in:to-do,in-progress,finished',
-        'date' => 'required|date',
         'start_time' => 'required|date_format:H:i:s',
         'end_time' => 'required|date_format:H:i:s'
     ];

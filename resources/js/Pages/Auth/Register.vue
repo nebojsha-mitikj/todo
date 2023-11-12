@@ -11,9 +11,15 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
+    timezone: ''
 });
 
 const submit = () => {
+    let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (timezone == null || timezone.length === 0) {
+        timezone = 'Europe/Berlin';
+    }
+    form.timezone = timezone;
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });

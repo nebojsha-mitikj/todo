@@ -41,7 +41,7 @@ class TaskTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->post('/todo', $this->taskData());
+            ->post('/todo', array_merge($this->taskData(), ['for_today' => true]));
 
         $response->assertOk();
 

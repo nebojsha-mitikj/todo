@@ -6,7 +6,6 @@ import TextInput from '@/Components/TextInput.vue';
 import TaskTable from '@/Components/TaskTable.vue';
 import axios from 'axios';
 import {reactive, ref, computed, toRaw} from 'vue';
-import moment from 'moment';
 import { getStringFromTimeObject, getTimeObjectFromString } from "@/Utils/TimeUtil.js";
 import useEmitter from '@/Composables/useEmitter.js';
 
@@ -21,6 +20,9 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    today: {
+        type: String
+    }
 });
 
 const taskInput = ref('')
@@ -35,11 +37,9 @@ const data = reactive({
 
 
 const filteredTasks = computed(() => {
+    let today = ref(props.today).value;
     return data.tasks.filter((task) => {
-        return task.date === moment()
-            .utcOffset('+0200')
-            .add(Number(data.displayPlanner),'days')
-            .format('YYYY-MM-DD')
+        return data.displayPlanner ? task.date !== today : task.date === today;
     })
 });
 
@@ -102,10 +102,7 @@ const storeTask = () => {
     let taskData = {
         'description': data.taskDescription,
         'status': 'to-do',
-        'date': moment()
-            .utcOffset('+0200')
-            .add(Number(data.displayPlanner),'days')
-            .format('YYYY-MM-DD'),
+        'for_today': !data.displayPlanner,
         'start_time': getStringFromTimeObject(data.taskTimeRange[0]),
         'end_time': getStringFromTimeObject(data.taskTimeRange[1])
     }
@@ -121,7 +118,6 @@ const updateTask = () => {
     let taskData = {
         'description': data.taskDescription,
         'status': data.tasks[index].status,
-        'date': data.tasks[index].date,
         'start_time': getStringFromTimeObject(data.taskTimeRange[0]),
         'end_time': getStringFromTimeObject(data.taskTimeRange[1])
     }

@@ -23,6 +23,9 @@ class StoreTaskRequest extends FormRequest
      */
     public function rules(): array
     {
-        return TaskValidationRules::getRules();
+        return array_merge(
+            TaskValidationRules::getRules(),
+            ['for_today' => 'required|boolean']
+        );
     }
 }

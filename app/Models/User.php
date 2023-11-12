@@ -23,6 +23,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'timezone',
         'daily_goal_reach_counter',
         'last_daily_goal_reach_date',
         'password'
@@ -60,7 +61,7 @@ class User extends Authenticatable
 
     public function dailyGoalIsReached(): bool
     {
-        return $this->last_daily_goal_reach_date === Carbon::today()->format('Y-m-d');
+        return $this->last_daily_goal_reach_date === Carbon::now($this->timezone)->format('Y-m-d');
     }
 
     public function shouldResetGoalReach(): bool
@@ -71,7 +72,7 @@ class User extends Authenticatable
         return $this->tasks()
             ->whereBetween('date', [
                 $this->last_daily_goal_reach_date,
-                Carbon::yesterday()->toDateString()
+                Carbon::now($this->timezone)->subDay()->format('Y-m-d')
             ])->where('status', '!=', TaskStatus::Finished->value)
             ->exists();
     }
@@ -85,7 +86,7 @@ class User extends Authenticatable
 
     public function setDailyGoalReach(): bool
     {
-        $this->last_daily_goal_reach_date = Carbon::today();
+        $this->last_daily_goal_reach_date = Carbon::now($this->timezone)->format('Y-m-d');
         ++$this->daily_goal_reach_counter;
         return $this->save();
     }

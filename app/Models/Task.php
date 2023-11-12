@@ -35,7 +35,14 @@ class Task extends Model
         $this->description = $request->description;
         $this->status = $request->status;
         $this->user_id = Auth::id();
-        $this->date = $request->date;
+        if (empty($this->date)) {
+            $timezone = Auth::user()->timezone;
+            if ($request->for_today) {
+                $this->date = Carbon::now($timezone)->format('Y-m-d');
+            } else {
+                $this->date = Carbon::now($timezone)->addDay()->format('Y-m-d');
+            }
+        }
         $this->start_time = $request->start_time;
         $this->end_time = $request->end_time;
         $this->save();
@@ -49,10 +56,10 @@ class Task extends Model
         return $this;
     }
 
-    public static function areFinished(int $userId): bool
+    public static function areFinished(User $user): bool
     {
-        return !self::where('user_id', $userId)
-            ->whereDate('date', Carbon::today())
+        return !self::where('user_id', $user->id)
+            ->whereDate('date', Carbon::now($user->timezone)->format('Y-m-d'))
             ->where('status', '!=', TaskStatus::Finished->value)
             ->exists();
     }

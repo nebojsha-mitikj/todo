@@ -18,11 +18,12 @@ class HistoryController extends Controller
      */
     public function index(): Response
     {
+        $timezone = Auth::user()->timezone;
         return Inertia::render('Task/History', [
             'tasks' => Task::where('user_id', '=', Auth::id())
                 ->whereBetween('date', [
-                    Carbon::now()->subDays(14)->format('Y-m-d'),
-                    Carbon::now()->subDay()->format('Y-m-d')
+                    Carbon::now($timezone)->subDays(14)->format('Y-m-d'),
+                    Carbon::now($timezone)->subDay()->format('Y-m-d')
                 ])->orderBy('date', 'desc')
                 ->get()
         ]);

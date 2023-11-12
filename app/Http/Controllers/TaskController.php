@@ -10,6 +10,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Requests\UpdateTaskStatusRequest;
 use App\Models\Task;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -24,9 +25,14 @@ class TaskController extends Controller
      */
     public function index(): Response
     {
+        $timezone = Auth::user()->timezone;
         return Inertia::render('Task/Todo', [
+            'today' => Carbon::now($timezone)->format('Y-m-d'),
             'tasks' => Task::where('user_id', '=', Auth::id())
-                ->whereBetween('date', [Carbon::today(), Carbon::tomorrow()])
+                ->whereBetween('date', [
+                    Carbon::now($timezone)->format('Y-m-d'),
+                    Carbon::now($timezone)->addDay()->format('Y-m-d')
+                ])
                 ->get()
         ]);
     }
@@ -52,10 +58,11 @@ class TaskController extends Controller
      */
     public function updateStatus(UpdateTaskStatusRequest $request, Task $task): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::user();
         $task->updateStatus(TaskStatus::tryFrom($request->status));
         $goalReached = false;
-        if(Task::areFinished($user->id) && !$user->dailyGoalIsReached()){
+        if(Task::areFinished($user) && !$user->dailyGoalIsReached()){
             $user->setDailyGoalReach();
             $goalReached = true;
         }
