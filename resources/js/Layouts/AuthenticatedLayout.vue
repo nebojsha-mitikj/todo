@@ -47,7 +47,7 @@ emitter.on('goalReached', () => {
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('task.index')" :active="route().current('task.index')">
-                                    Tasks
+                                    Todo
                                 </NavLink>
 
                                 <NavLink :href="route('history.index')" :active="route().current('history.index')">
@@ -148,7 +148,7 @@ emitter.on('goalReached', () => {
                 >
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('task.index')" :active="route().current('task.index')">
-                            Tasks
+                            Todo
                         </ResponsiveNavLink>
 
                         <ResponsiveNavLink :href="route('history.index')" :active="route().current('history.index')">
