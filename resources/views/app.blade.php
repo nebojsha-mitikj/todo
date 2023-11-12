@@ -4,9 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title inertia>{{ config('app.name', 'nebbo.o') }}</title>
+        <title inertia>{{ config('app.name', 'Todo') }}</title>
 
-        <link rel="icon" href="{{ asset('images/todo-i.png') }}" type="image/png">
+        <link rel="icon" href="{{ asset('images/n.png') }}" type="image/png">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

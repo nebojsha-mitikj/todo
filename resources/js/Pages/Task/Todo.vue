@@ -143,7 +143,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Planner" />
+    <Head title="Tasks" />
 
     <AuthenticatedLayout>
 
