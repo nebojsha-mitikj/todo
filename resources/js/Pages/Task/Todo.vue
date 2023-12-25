@@ -102,9 +102,11 @@ const storeTask = () => {
     let taskData = {
         'description': data.taskDescription,
         'status': 'to-do',
-        'for_today': !data.displayPlanner,
-        'start_time': getStringFromTimeObject(data.taskTimeRange[0]),
-        'end_time': getStringFromTimeObject(data.taskTimeRange[1])
+        'for_today': !data.displayPlanner
+    }
+    if (data.taskTimeRange) {
+        taskData.start_time = getStringFromTimeObject(data.taskTimeRange[0]);
+        taskData.end_time = getStringFromTimeObject(data.taskTimeRange[1]);
     }
     axios.post(route('task.store'), taskData).then(res => {
         data.tasks.push(res.data.task);
@@ -117,9 +119,11 @@ const updateTask = () => {
     let index = getTaskIndexById(data.editedTaskId)
     let taskData = {
         'description': data.taskDescription,
-        'status': data.tasks[index].status,
-        'start_time': getStringFromTimeObject(data.taskTimeRange[0]),
-        'end_time': getStringFromTimeObject(data.taskTimeRange[1])
+        'status': data.tasks[index].status
+    }
+    if (data.taskTimeRange) {
+        taskData.start_time = getStringFromTimeObject(data.taskTimeRange[0]);
+        taskData.end_time = getStringFromTimeObject(data.taskTimeRange[1]);
     }
     axios.put(route('task.update', {task: data.tasks[index].id}), taskData).then(res => {
         data.tasks[index] = res.data.task;
@@ -130,7 +134,7 @@ const updateTask = () => {
 }
 
 const submit = () => {
-    if(data.taskDescription.length === 0 || toRaw(data.taskTimeRange) == null){
+    if(data.taskDescription.length === 0){
         return;
     }
     if(data.editedTaskId == null){

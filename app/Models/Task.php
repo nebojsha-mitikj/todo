@@ -43,8 +43,13 @@ class Task extends Model
                 $this->date = Carbon::now($timezone)->addDay()->format('Y-m-d');
             }
         }
-        $this->start_time = $request->start_time;
-        $this->end_time = $request->end_time;
+        if (empty($request->start_time) || empty($request->end_time)) {
+            $this->start_time = '00:00:00';
+            $this->end_time = '00:00:00';
+        } else {
+            $this->start_time = $request->start_time;
+            $this->end_time = $request->end_time;
+        }
         $this->save();
         return $this;
     }
