@@ -13,11 +13,11 @@ https://todo.nebojsha.com
     laravelsail/php82-composer:latest \
     composer install --ignore-platform-reqs
 4. Rename .env.example to .env
-5. ./vendor/bin/sail up -d
-6. ./vendor/bin/sail artisan key:generate
-7. ./vendor/bin/sail npm install
-8. ./vendor/bin/sail npm run build
-9. Update database env variables in .env
+5. Update database env variables in .env (I'm using AWS RDS)
+6. ./vendor/bin/sail up -d
+7. ./vendor/bin/sail artisan key:generate
+8. ./vendor/bin/sail npm install
+9. ./vendor/bin/sail npm run build
 
 ## App Screenshots:
 
