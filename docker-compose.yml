@@ -7,6 +7,7 @@ services:
             args:
                 WWWGROUP: '${WWWGROUP}'
         image: sail-8.2/app
+        container_name: todo-web
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -22,6 +23,7 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
+            - shared-proxy
         depends_on:
             - mysql
     mysql:
@@ -52,6 +54,8 @@ services:
 networks:
     sail:
         driver: bridge
+    shared-proxy:
+        external: true
 volumes:
     sail-mysql:
         driver: local
